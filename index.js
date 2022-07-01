@@ -26,12 +26,12 @@ async function run() {
             const task = results.filter(result => result.status !== "complete")
             res.send(task);
         })
-        //get all task
-        app.get('/allTasks', async (req, res) => {
-            const query = {};
-            const results = await tasksCollections.find(query).toArray();
-            res.send(results);
-        })
+        // //get all task
+        // app.get('/allTasks', async (req, res) => {
+        //     const query = {};
+        //     const results = await tasksCollections.find(query).toArray();
+        //     res.send(results);
+        // })
         //post task
         app.post('/tasks', async (req, res) => {
             const data = req.body;
