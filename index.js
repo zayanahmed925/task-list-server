@@ -1,6 +1,6 @@
 const express = require('express');
 const cors = require('cors');
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 require('dotenv').config();
 const app = express();
 const port = process.env.PORT || 5000;
@@ -23,6 +23,13 @@ async function run() {
         app.get('/tasks', async (req, res) => {
             const query = {};
             const results = await tasksCollections.find(query).toArray();
+            const task = results.filter(result => result.status !== "complete")
+            res.send(task);
+        })
+        //get all task
+        app.get('/allTasks', async (req, res) => {
+            const query = {};
+            const results = await tasksCollections.find(query).toArray();
             res.send(results);
         })
         //post task
@@ -31,7 +38,25 @@ async function run() {
             const result = await tasksCollections.insertOne(data);
             res.send(result);
         });
-
+        //complete check
+        app.put('/tasks/:id', async (req, res) => {
+            const id = req.params.id;
+            console.log(id)
+            const query = { _id: ObjectId(id) };
+            const updateDoc = {
+                $set: {
+                    status: "complete"
+                }
+            }
+            const result = await tasksCollections.updateOne(query, updateDoc);
+            res.send(result)
+        })
+        //get completed task
+        app.get('/task', async (req, res) => {
+            const query = { status: "complete" };;
+            const results = await tasksCollections.find(query).toArray();
+            res.send(results);
+        })
         app.get('/', (req, res) => {
             res.send('Hello World!')
         })
