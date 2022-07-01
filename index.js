@@ -19,7 +19,7 @@ async function run() {
     try {
         await client.connect();
         const tasksCollections = await client.db('task-list').collection('tasks');
-        //get all task
+        //task show without complete
         app.get('/tasks', async (req, res) => {
             const query = {};
             const results = await tasksCollections.find(query).toArray();
@@ -56,6 +56,22 @@ async function run() {
             const query = { status: "complete" };;
             const results = await tasksCollections.find(query).toArray();
             res.send(results);
+        })
+
+
+        //for task update
+        app.put('/tas/:id', async (req, res) => {
+            const id = req.params.id;
+            const filter = { _id: ObjectId(id) };
+            const nameUpdate = req.body.name;
+
+            const updatedDoc = {
+                $set: {
+                    name: nameUpdate,
+                }
+            };
+            const updatedPurchase = await tasksCollections.updateOne(filter, updatedDoc);
+            res.send(updatedPurchase);
         })
         app.get('/', (req, res) => {
             res.send('Hello World!')
